@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Component("shoppingCartMap")
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)

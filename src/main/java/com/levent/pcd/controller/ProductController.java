@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.levent.pcd.business.ShoppingHandler;
 import com.levent.pcd.model.Product;
 import com.levent.pcd.model.ShoppingCartMap;
 import com.levent.pcd.service.CategoryService;
@@ -30,9 +29,7 @@ public class ProductController {
 	@Autowired
 	private CategoryService categoryService;
 	
-	@Autowired
-	private ShoppingHandler shoppingHandler;
-	
+
 	@Autowired
 	private ShoppingCartMap shoppingCartMap;
 	

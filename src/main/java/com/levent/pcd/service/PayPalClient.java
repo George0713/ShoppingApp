@@ -1,18 +1,17 @@
 package com.levent.pcd.service;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.levent.pcd.model.Order;
 import com.levent.pcd.model.Order.OrderStatus;
-import com.levent.pcd.model.ShoppingCartMap;
 import com.levent.pcd.repository.OrderRepository;
 import com.paypal.api.payments.Amount;
 import com.paypal.api.payments.Links;
@@ -32,16 +31,17 @@ import com.paypal.base.rest.PayPalRESTException;
 	    String clientSecret = "EHN-bcn02PKbwlEkBWtiMXTPMF0F39pLl_N-qy2rI4LzBcepeJlFkCL1bKOYwWJLT69tgYz-2OqLpfr1";
 
 	 
-	    String orderId;
+	 
 	    
 	    @Autowired ProductService pService;
 //	    PayPalClient(){}
 
-	    public String createPayment(String sum, String path, String username){
+	    public String createPayment(String path, String username){
+	    	Order order= pService.updateProductsRemained(username);
 	        Map<String, Object> response = new HashMap<String, Object>();
 	        Amount amount = new Amount();
 	        amount.setCurrency("INR");
-	        amount.setTotal(sum);
+	        amount.setTotal(order.getAmountDeducted()+"");
 	        Transaction transaction = new Transaction();
 	        transaction.setAmount(amount);
 	        List<Transaction> transactions = new ArrayList<Transaction>();
@@ -54,11 +54,11 @@ import com.paypal.base.rest.PayPalRESTException;
 	        payment.setIntent("sale");
 	        payment.setPayer(payer);
 	        payment.setTransactions(transactions);
-	        Order o=rep.insert(Order.builder().date(LocalDateTime.now()).status(OrderStatus.ORDER_INITIATED).username(username).build());
-	         orderId=o.getOrderId();
+	        Order o=rep.save(Order.builder().orderId(order.getOrderId()).date(LocalDateTime.now()).status(OrderStatus.PAYMENT_INITIATED).amountDeducted(order.getAmountDeducted()).productsCancelled(order.getProductsCancelled()).productsPlaced(order.getProductsPlaced()).username(username).build());
+	        System.out.println(o);
 	        RedirectUrls redirectUrls = new RedirectUrls();
-	        redirectUrls.setCancelUrl(path+"/payment_failure");
-	        redirectUrls.setReturnUrl(path+"/payment_start?sum="+sum);
+	        redirectUrls.setCancelUrl(path+"/send_mail?orderId="+ o.getOrderId());
+	        redirectUrls.setReturnUrl(path+"/payment_start?sum="+o.getAmountDeducted()+"&orderId="+order.getOrderId());
 	        payment.setRedirectUrls(redirectUrls);
 	        Payment createdPayment;
 	        String redirectUrl = "";
@@ -80,17 +80,22 @@ import com.paypal.base.rest.PayPalRESTException;
 	                
 	            }
 	        } catch (PayPalRESTException e) {
-	            System.out.println("Error happened during payment creation!");
-	            return "redirect:/payment_failure";
+	        	 Order o1=rep.save(Order.builder().orderId(order.getOrderId()).date(LocalDateTime.now()).status(OrderStatus.PAYMENT_FAILED).amountDeducted(order.getAmountDeducted()).productsCancelled(order.getProductsCancelled()).productsPlaced(order.getProductsPlaced()).username(username).build());
+	            System.out.println(o1);
+	        	return "redirect:/send_mail?orderId="+ o.getOrderId();
 	        }
-	        rep.save(Order.builder().orderId(orderId).date(LocalDateTime.now()).status(OrderStatus.PAYMENT_INITIATED).username(username).build());
-	        
+	             
 	        return "redirect:"+redirectUrl;
 	    }
 
 
-	    public String completePayment(String paymentId, String payerId, String username, String sum){
-	        Map<String, Object> response = new HashMap();
+	    public String completePayment(String paymentId, String payerId, String sum, String orderId, String username){
+	    	Optional<Order> optionalOrder= rep.findById(orderId);
+	    	if(!optionalOrder.isPresent()) {
+	    		throw new RuntimeException("Error processing order with orderId:"+ orderId);
+	    	}
+	    	Order order= optionalOrder.get();
+	        Map<String, Object> response = new HashMap<>();
 	        Payment payment = new Payment();
 	        payment.setId(paymentId);
 	        PaymentExecution paymentExecution = new PaymentExecution();
@@ -103,13 +108,14 @@ import com.paypal.base.rest.PayPalRESTException;
 	                response.put("payment", createdPayment);
 	            }
 	        } catch (PayPalRESTException e) {
-	            System.err.println(e.getDetails());
-	            return "redirect:/payment_failure";
+	        	 Order o=rep.save(Order.builder().orderId(order.getOrderId()).date(LocalDateTime.now()).status(OrderStatus.PAYMENT_FAILED).amountDeducted(order.getAmountDeducted()).productsCancelled(order.getProductsCancelled()).productsPlaced(order.getProductsPlaced()).username(username).build());
+	 	        System.out.println(o);
+	            return "redirect:/send_mail?orderId="+ orderId;
 	        }
-	        rep.save(Order.builder().orderId(orderId).date(LocalDateTime.now()).status(OrderStatus.PAYMENT_SUCCESS).username(username).build());
+	        Order o=rep.save(Order.builder().orderId(order.getOrderId()).date(LocalDateTime.now()).status(OrderStatus.PAYMENT_SUCCESS).amountDeducted(order.getAmountDeducted()).productsCancelled(order.getProductsCancelled()).productsPlaced(order.getProductsPlaced()).username(username).build());
+	        System.out.println(o);
 	        
-	         pService.updateProductsRemained(orderId,username);
-	        return "redirect:/payment_success";
+	        return "redirect:/send_mail?orderId="+ orderId;
 	    }
 
 

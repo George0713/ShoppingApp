@@ -1,6 +1,7 @@
 package com.levent.pcd.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import com.levent.pcd.model.ShoppingCartEntry.ItemStatus;
 import com.levent.pcd.model.ShoppingCartMap;
 import com.levent.pcd.repository.OrderRepository;
 import com.levent.pcd.repository.ProductRepository;
+import com.levent.pcd.utils.PriceStrategyTax;
 
 
 @Service
@@ -30,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductRepository productRepository;
 	@Autowired OrderRepository rep;
+	@Autowired PriceStrategyTax priceStrategy;
 	
 	@Override
 	public List<Product> findAll(int page, int limit) {
@@ -82,8 +85,10 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void updateProductsRemained(String orderId, String username) {
-	
+	public Order updateProductsRemained(String username) {
+	double sum=0;
+	List<ShoppingCartEntry> orderPlaced= new ArrayList<>();
+	List<ShoppingCartEntry> orderCancelled= new ArrayList<>();
 		//If few items in cart gets out of stock, just place order with products in store. Cart will reflect items to be out_of_stock for which order not placed.
 		Iterator<ShoppingCartEntry> it= cart.getCartItems().values().iterator();
 		while(it.hasNext()){
@@ -94,9 +99,12 @@ public class ProductServiceImpl implements ProductService {
 			}else {
 				Product prod=p.get();
 				if(productRepository.deductQuantity(prod.getId(), entry.getQuantity())) {
+					sum+= priceStrategy.gePriceAfterTax(prod.getPrice());
+					orderPlaced.add(entry);
 					it.remove();
 					
 				}else {
+					orderCancelled.add(entry);
 					entry.setStatus(ItemStatus.OUT_OF_STOCK);
 				}
 				
@@ -104,9 +112,9 @@ public class ProductServiceImpl implements ProductService {
 		}
 		
 		
-		   rep.save(Order.builder().orderId(orderId).date(LocalDateTime.now()).status(OrderStatus.ORDER_CONFIRMED).username(username).build());
-		   
-		
+		 Order o=  rep.insert(Order.builder().date(LocalDateTime.now()).productsPlaced(orderPlaced).productsCancelled(orderCancelled).amountDeducted(sum).status(OrderStatus.ORDER_INITIATED).username(username).build());
+		   System.out.println(o);
+		return o;
 	}
 
 	

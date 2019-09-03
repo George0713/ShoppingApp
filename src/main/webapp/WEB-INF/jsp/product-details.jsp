@@ -112,7 +112,7 @@
 						<input type="hidden"  name="id" value="${product.id}"/>
 						<input type="hidden"  name="imageUrl" value="${product.imageUrl}"/>
 						<input type="hidden"  name="price" value="${product.price}"/>
-						<input type="hidden"  name="prodName" value="${product.productName}"/>
+						<input type="hidden"  name="productName" value="${product.productName}"/>
 						<input type="hidden" name="productTotalPrice" value="0"/>
 						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 						<div class="col-lg-3 col-md-3">

@@ -1,13 +1,11 @@
 package com.levent.pcd.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.levent.pcd.model.Order;
 import com.levent.pcd.model.Product;
-import com.levent.pcd.model.ShoppingCartEntry;
-import com.levent.pcd.model.ShoppingCartMap;
 
 /*
  * Service Layer should be used for Transactional processes
@@ -28,7 +26,7 @@ public interface ProductService {
 
 	public Product findById(String id);
 	void addProduct(Product product);
-	public void updateProductsRemained(String orderId, String username);
+	public Order updateProductsRemained( String username);
 	
 	
 }
