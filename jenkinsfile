@@ -3,9 +3,8 @@ node {
    stage('Preparation') { // for display purposes
       // Get some code from a GitHub repository
       
-     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AKIATVRT64YKFSQDDYWC', credentialsId: '', secretKeyVariable: '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']]) {
-    // some block
-   }
+     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AKIATVRT64YKFSQDDYWC', credentialsId: 'amazon', secretKeyVariable: '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']]) 
+ 
         // build project
 
       git 'https://github.com/George0713/ShoppingApp.git'
@@ -37,7 +36,7 @@ node {
    
 
 	stage('Deploy'){
-				wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: '', defaultRegion: 'us-east-2']) 
+				wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: 'amazon', defaultRegion: 'us-east-2']) 
                 echo 'Deploying'
                 sh 'aws elasticbeanstalk create-application-version --region us-east-2  --application-name ShoppingApp    --version-label ${JOB_NAME}-${BUILD_NUMBER}  --description ${BUILD_TAG}'                    
                 sh 'aws elasticbeanstalk update-environment    --region us-east-2    --environment-name Shoppingapp-env   --version-label ${JOB_NAME}-${BUILD_NUMBER}'
