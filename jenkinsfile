@@ -11,6 +11,9 @@ node {
       mvnHome = tool 'mvn'
       
       jdk = tool name: 'java8'
+       env.JAVA_HOME = "${jdk}"
+      echo "jdk installation path is: ${jdk}"
+      sh '$JAVA_HOME/bin/java -version'
    }
    stage('Build') {
       // Run the maven build
