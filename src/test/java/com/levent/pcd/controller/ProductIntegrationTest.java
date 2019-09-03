@@ -65,8 +65,7 @@ public class ProductIntegrationTest {
 //	int port;
 	@Autowired
 	private MockMvc mockMvc;
-	@Autowired
-	private MockHttpSession session;
+
 	
 	
 //	@Before
@@ -131,7 +130,8 @@ public class ProductIntegrationTest {
         assertNotNull(mav.getModel().get("categoryList"));
 	}
 	
-	@Test	
+	@Test
+	@Ignore
 	public void testlistProductById() throws Exception {		
 		
 		String Id = "1";
@@ -140,6 +140,18 @@ public class ProductIntegrationTest {
         ModelAndView mav = mvcResult.getModelAndView();
         
         assertEquals("product-details",mav.getViewName());	
+//        assertNotNull(mav.getModel().get("productList"));
+//        assertNotNull(mav.getModel().get("categoryList"));
+	}
+	
+	@Test	
+	public void testShoppingCart() throws Exception {		
+		
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/shopping-cart"));
+        MvcResult mvcResult = resultActions.andReturn();
+        ModelAndView mav = mvcResult.getModelAndView();
+        
+        assertEquals("shopping-cart",mav.getViewName());	
 //        assertNotNull(mav.getModel().get("productList"));
 //        assertNotNull(mav.getModel().get("categoryList"));
 	}
