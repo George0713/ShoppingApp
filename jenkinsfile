@@ -4,7 +4,7 @@ node {
       // Get some code from a GitHub repository
       
       environment { 
-       accesskey='AKIATVRT64YKFSQDDYWC',
+       accesskey='AKIATVRT64YKFSQDDYWC'
         secret = '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'
     }
       
