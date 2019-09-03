@@ -251,6 +251,7 @@ class CustomOAuth2UserService extends DefaultOAuth2UserService{
             userInfo = updateExistingUser(userInfo, oAuth2UserInfo);
         } else {
         	userInfo = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
+        	userAuth = userAuthRepository.save(userAuth);
         }
 
         return UserPrincipal.create(userInfo,userAuth, oAuth2User.getAttributes());

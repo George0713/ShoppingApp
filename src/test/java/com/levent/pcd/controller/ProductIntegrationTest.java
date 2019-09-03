@@ -53,7 +53,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 //	}
 //}
 
-@SpringBootTest(classes = ProductController.class)
+@SpringBootTest
 @WebAppConfiguration
 @ContextConfiguration
 @AutoConfigureMockMvc
@@ -67,8 +67,7 @@ public class ProductIntegrationTest {
 	private MockMvc mockMvc;
 	@Autowired
 	private MockHttpSession session;
-	@Autowired
-	private MockHttpServletRequest request;
+	
 	
 //	@Before
 //	public void init() {
@@ -132,17 +131,17 @@ public class ProductIntegrationTest {
         assertNotNull(mav.getModel().get("categoryList"));
 	}
 	
-//	@Test	
-//	public void testlistProductById() throws Exception {		
-//		
-//		String Id = "1";
-//		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/product-details-"+Id));
-//        MvcResult mvcResult = resultActions.andReturn();
-//        ModelAndView mav = mvcResult.getModelAndView();
-//        
-//        assertEquals("product-details",mav.getViewName());	
-////        assertNotNull(mav.getModel().get("productList"));
-////        assertNotNull(mav.getModel().get("categoryList"));
-//	}
+	@Test	
+	public void testlistProductById() throws Exception {		
+		
+		String Id = "1";
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/product-details-"+Id));
+        MvcResult mvcResult = resultActions.andReturn();
+        ModelAndView mav = mvcResult.getModelAndView();
+        
+        assertEquals("product-details",mav.getViewName());	
+//        assertNotNull(mav.getModel().get("productList"));
+//        assertNotNull(mav.getModel().get("categoryList"));
+	}
 
 }
