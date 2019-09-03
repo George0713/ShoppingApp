@@ -3,7 +3,9 @@ node {
    stage('Preparation') { // for display purposes
       // Get some code from a GitHub repository
       
-     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AKIATVRT64YKFSQDDYWC', credentialsId: 'amazon', secretKeyVariable: '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']]) 
+     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AKIATVRT64YKFSQDDYWC', credentialsId: 'amazon', secretKeyVariable: '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']]) {
+     
+     }
  
         // build project
 
