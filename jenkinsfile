@@ -3,14 +3,11 @@ node {
    stage('Preparation') { // for display purposes
       // Get some code from a GitHub repository
       
-      environment {
-        AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
-        AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
+      environment { 
+       accesskey='AKIATVRT64YKFSQDDYWC',
+        secret = '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'
     }
       
-     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AKIATVRT64YKFSQDDYWC', credentialsId: 'amazon', secretKeyVariable: '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']]) {
-     
-     }
  
         // build project
 
@@ -47,9 +44,9 @@ node {
      
      
                 echo 'Deploying'
-              sh " aws elasticbeanstalk create-application-version --region us-east-2  --application-name ShoppingApp    --version-label ${JOB_NAME}-${BUILD_NUMBER}  --description ${BUILD_TAG}"                   
+              sh " aws elasticbeanstalk create-application-version --region us-east-2  --application-name ShoppingApp    --version-label ${JOB_NAME}-${BUILD_NUMBER}  --description ${BUILD_TAG} --key ${env.accesskey} --secret ${env.secret} "                   
                
-              sh " aws elasticbeanstalk update-environment    --region us-east-2    --environment-name Shoppingapp-env   --version-label ${JOB_NAME}-${BUILD_NUMBER}"
+              sh " aws elasticbeanstalk update-environment    --region us-east-2    --environment-name Shoppingapp-env   --version-label ${JOB_NAME}-${BUILD_NUMBER}  --key ${env.accesskey} --secret ${env.secret}"
             }
 	}
 }
