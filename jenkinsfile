@@ -40,11 +40,11 @@ node {
 	stage('Deploy'){
 				     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AKIATVRT64YKFSQDDYWC', credentialsId: 'amazon', secretKeyVariable: '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']]) {
      
-     }
+     
                 echo 'Deploying'
                 sh 'aws elasticbeanstalk create-application-version --region us-east-2  --application-name ShoppingApp    --version-label ${JOB_NAME}-${BUILD_NUMBER}  --description ${BUILD_TAG}'                    
                 sh 'aws elasticbeanstalk update-environment    --region us-east-2    --environment-name Shoppingapp-env   --version-label ${JOB_NAME}-${BUILD_NUMBER}'
-            
+            }
 	}
 }
 
