@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -43,6 +44,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.levent.pcd.Client;
+import com.levent.pcd.model.ShoppingCartMap;
+
 
 
 //@TestConfiguration
@@ -65,6 +69,9 @@ public class ProductIntegrationTest {
 //	int port;
 	@Autowired
 	private MockMvc mockMvc;
+	@Autowired
+	private MockHttpSession mocksession;
+
 
 	
 	
@@ -92,7 +99,6 @@ public class ProductIntegrationTest {
 //	}
 
 	@Test
-	@Ignore
 	public void testListProducts() throws Exception {
 		
 		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/products"));
@@ -101,11 +107,10 @@ public class ProductIntegrationTest {
         
         assertEquals("products",mav.getViewName());	
         assertEquals(0,mav.getModel().get("page"));
-        assertNotNull(mav.getModel().get("products"));
+        assertNotNull(mav.getModel().get("productList"));
 	}
 	
 	@Test
-	@Ignore
 	public void testlistProductsByNameSearch() throws Exception {
 		
 		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/products").param("srch-term", "batt"));
@@ -118,7 +123,6 @@ public class ProductIntegrationTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testlistProductsByCategory() throws Exception {
 		String categoryName = "Housewares";
 		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/products-by-category-"+ categoryName));
@@ -131,7 +135,6 @@ public class ProductIntegrationTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testlistProductById() throws Exception {		
 		
 		String Id = "1";
@@ -140,20 +143,19 @@ public class ProductIntegrationTest {
         ModelAndView mav = mvcResult.getModelAndView();
         
         assertEquals("product-details",mav.getViewName());	
-//        assertNotNull(mav.getModel().get("productList"));
-//        assertNotNull(mav.getModel().get("categoryList"));
 	}
 	
-	@Test	
-	public void testShoppingCart() throws Exception {		
-		
-		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/shopping-cart"));
-        MvcResult mvcResult = resultActions.andReturn();
-        ModelAndView mav = mvcResult.getModelAndView();
-        
-        assertEquals("shopping-cart",mav.getViewName());	
-//        assertNotNull(mav.getModel().get("productList"));
-//        assertNotNull(mav.getModel().get("categoryList"));
-	}
+//	@Test	
+//	public void testShoppingCart() throws Exception {		
+//		
+//		ResultActions resultActionsF = mockMvc.perform(MockMvcRequestBuilders.get("/products").session(mocksession));
+//		
+//		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/shopping-cart").session(mocksession));
+//        MvcResult mvcResult = resultActions.andReturn();
+//        ModelAndView mav = mvcResult.getModelAndView();
+//        
+//        assertEquals("shopping-cart",mav.getViewName());	
+//
+//	}
 
 }
