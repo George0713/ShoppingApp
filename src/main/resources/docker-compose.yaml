@@ -1,0 +1,26 @@
+version: "3.3"
+
+services:
+  shoppingapp: 
+    image: payalbnsl/shoppingapp:1
+    networks: 
+      - n1
+    ports: 
+      - 80:9000
+     
+  mongodb:
+    container_name: mongodb
+    restart: on-failure:10
+    image: mongo:4.2
+    networks:
+      - n1
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongodb
+      MONGO_INITDB_ROOT_PASSWORD: mongodb
+      MONGO_INITDB_DATABASE: admin
+    ports:
+      - 27017:27017
+    entrypoint: script.js
+     
+networks:
+   n1:

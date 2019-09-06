@@ -5,6 +5,7 @@
 	<groupId>com.levent.pcd</groupId>
 	<artifactId>ProductCatalogDemo</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>Product Catalog Demo</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -68,16 +69,16 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2 -->
 		<dependency>
-		    <groupId>org.springframework.security</groupId>
-		    <artifactId>spring-security-oauth2-client</artifactId>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-client</artifactId>
 		</dependency>
 		<dependency>
-	        <groupId>org.springframework.security.oauth.boot</groupId>
-	        <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-	        <version>2.0.0.RELEASE</version>
-    	</dependency>
-				
-		
+			<groupId>org.springframework.security.oauth.boot</groupId>
+			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+			<version>2.0.0.RELEASE</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
@@ -204,13 +205,66 @@
 
 	<build>
 		<finalName>ProductCatalogDemo</finalName>
-<plugins>
- <plugin>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-maven-plugin</artifactId>
-   
-      </plugin>
-</plugins>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.27.2</version>
+				<configuration>
+
+					<dockerHost>https://192.168.99.101:2376</dockerHost>
+					<!-- <authConfig> <username>username</username> <password>password</password> 
+						</authConfig> -->
+					<images>
+						<image>
+							<name>payalbnsl/shoppingapp</name>
+							<build>
+								<dockerFileDir>${project.basedir}/src/main/resources/</dockerFileDir>
+
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<tags>
+									<tag>1</tag>
+								</tags>
+							</build>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>mydeploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
 
 	</build>
 
