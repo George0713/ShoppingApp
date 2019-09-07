@@ -1,4 +1,4 @@
-package com.levent.pcd.config;
+/*package com.levent.pcd.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -25,4 +25,4 @@ public class MongoConfig {
   private  String password;
 
  
-}
+}*/

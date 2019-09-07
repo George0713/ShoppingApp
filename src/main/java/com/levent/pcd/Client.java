@@ -1,9 +1,5 @@
 	package com.levent.pcd;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -11,7 +7,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.mapping.RepositoryDetectionStrategy.RepositoryDetectionStrategies;
@@ -24,21 +19,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.github.cloudyrock.mongock.SpringBootMongock;
 import com.github.cloudyrock.mongock.SpringBootMongockBuilder;
 import com.levent.pcd.changelog.MigrationChangeSet;
-import com.levent.pcd.config.MongoConfig;
 import com.levent.pcd.config.SecurityConfig;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
 
 @SpringBootApplication
 @EnableCaching
 @EnableTransactionManagement
 @EnableMongoRepositories(basePackages="com.levent.pcd.repository")
 @Import(SecurityConfig.class)
-public class Client extends AbstractMongoConfiguration implements WebMvcConfigurer, RepositoryRestConfigurer  {
+public class Client  implements WebMvcConfigurer, RepositoryRestConfigurer  {
 	
-
-	@Autowired MongoConfig config;
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Client.class, args);
 		
@@ -70,18 +60,5 @@ public class Client extends AbstractMongoConfiguration implements WebMvcConfigur
 				.setApplicationContext(springContext).setLockQuickConfig().build();
 	}
 
-@Bean
-	public MongoClient mongoClient() {
-	       ServerAddress addr = new ServerAddress(config.getHost(), config.getPort());
-	      MongoCredential credential = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
-	      List<MongoCredential> credentialsList = new ArrayList<MongoCredential>();
-	        credentialsList.add(credential);
-	        return new MongoClient(addr, credentialsList);
-	}
-
-	@Override
-	protected String getDatabaseName() {
-		return "levent";
-	}
 
 }
