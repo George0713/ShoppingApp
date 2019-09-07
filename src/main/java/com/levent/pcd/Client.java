@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
@@ -32,12 +31,10 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
 @SpringBootApplication
-@Configuration
 @EnableCaching
 @EnableTransactionManagement
 @EnableMongoRepositories(basePackages="com.levent.pcd.repository")
 @Import(SecurityConfig.class)
-//@EnableAutoConfiguration(exclude=MongoDataAutoConfiguration.class)
 public class Client extends AbstractMongoConfiguration implements WebMvcConfigurer, RepositoryRestConfigurer  {
 	
 
@@ -73,7 +70,7 @@ public class Client extends AbstractMongoConfiguration implements WebMvcConfigur
 				.setApplicationContext(springContext).setLockQuickConfig().build();
 	}
 
-	@Override
+@Bean
 	public MongoClient mongoClient() {
 	       ServerAddress addr = new ServerAddress(config.getHost(), config.getPort());
 	      MongoCredential credential = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
