@@ -3,11 +3,13 @@ version: "3.3"
 services:
   shoppingapp: 
     image: payalbnsl/shoppingapp:1
+    restart: on-failure:10
     networks: 
       - n1
     ports: 
       - 80:9000
-     
+    depends_on:
+      - mongoClientTemp
   mongodb:
     container_name: mongodb
     restart: on-failure:10
@@ -20,7 +22,13 @@ services:
       MONGO_INITDB_DATABASE: admin
     ports:
       - 27017:27017
-    entrypoint: script.js
-     
+  mongoClientTemp:
+    image: mongo:4.2
+    restart: on-failure:20
+    networks:
+      - n1
+    command: mongo -host mongodb -u mongodb -p mongodb --authenticationDatabase admin  --eval "db.getSiblingDB('levent').createUser({user:'mongodb', pwd:'mongodb', roles:[{role:'readWrite',db:'levent'}]});"
+    depends_on:
+    - mongodb
 networks:
    n1:
