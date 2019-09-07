@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Component;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
@@ -30,6 +30,7 @@ import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.InsertOneModel;
 
 @ChangeLog
+@Component
 public class MigrationChangeSet {
 	@Autowired
 	ProductRepository productRepository;
@@ -38,7 +39,6 @@ public class MigrationChangeSet {
 	@Autowired
 	UserAuthRepository userAuthRepository;
 
-	@Bean
 	@ChangeSet(order = "001", id = "importProductData", author = "G.LI", version = "1")
 	public void change01(MongoTemplate template) {
 		try {
@@ -80,7 +80,6 @@ public class MigrationChangeSet {
 		}
 	}
 
-	@Bean
 	@ChangeSet(order = "002", id = "addDefaultUser", author = "G.LI", version = "1")
 	public void change02(MongoTemplate template) throws IOException {
 		UserInfo adminInfo = UserInfo.builder().nickname("ADMIN").username("admin@admin").build();

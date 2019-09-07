@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   shoppingapp: 
-    image: payalbnsl/shoppingapp:1
+    image: payalbnsl/shoppingapp
     restart: on-failure:10
     networks: 
       - n1

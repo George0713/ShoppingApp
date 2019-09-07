@@ -235,9 +235,6 @@
 								<assembly>
 									<descriptorRef>artifact</descriptorRef>
 								</assembly>
-								<tags>
-									<tag>1</tag>
-								</tags>
 							</build>
 						</image>
 					</images>

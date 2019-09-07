@@ -1,4 +1,4 @@
-/*package com.levent.pcd.service;
+package com.levent.pcd.service;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -34,36 +34,39 @@ public class UploadImageToS3Once {
 
 	public void doUpload() throws AmazonServiceException, SdkClientException, URISyntaxException, IOException {
 		AmazonS3 client = helper.getAmazonS3Client();
-		File file = new File("C:/Users/payal/products.json");
-		File file_done = new File("C:/Users/payal/products_done.json");
+		String fileName = "data/products.json";
+		File file = new File(getClass().getClassLoader().getResource(fileName).getFile());
+		File file_done = new File(getClass().getClassLoader().getResource("products_done.json").getFile());
+		if(!file_done.exists()) {
+			file_done.createNewFile();
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		Product[] products = mapper.readValue(file, Product[].class);
-		PrintWriter writer=new PrintWriter(file_done);
+		PrintWriter writer = new PrintWriter(file_done);
 		for (Product product : products) {
 			File file1 = new File("temp.jpg");
-			
-				String url = product.getImageUrl();
-				URL url1 = new URL(url);
-				
-				String filename = url.substring(url.lastIndexOf("/") + 1);
-				try {
+
+			String url = product.getImageUrl();
+			URL url1 = new URL(url);
+
+			String filename = url.substring(url.lastIndexOf("/") + 1);
+			try {
 				BufferedImage img = ImageIO.read(url1);
 				ImageIO.write(img, "jpg", file1);
 			} catch (Exception e) {
-				file1= new File("no_image.jpg");
-				System.out.println("Uploading no_image for "+ product.getImageUrl());
+				file1 = new File("no_image.jpg");
+				System.out.println("Uploading no_image for " + product.getImageUrl());
 			}
-				client.putObject(awsConfig.getS3().getDefaultBucket(), filename, file1);
-				product.setImageFileName(filename);
-				product.setImageUrl(awsConfig.getS3().getEndPoint()+"/"+ filename);
-				rep.save(product);
-				System.out.println(product.getId()+":"+ product.getImageUrl());
-				writer.println(product.getId());
-				writer.flush();
-			
+			client.putObject(awsConfig.getS3().getDefaultBucket(), filename, file1);
+			product.setImageFileName(filename);
+			product.setImageUrl(awsConfig.getS3().getEndPoint() + "/" + filename);
+			rep.save(product);
+			System.out.println(product.getId() + ":" + product.getImageUrl());
+			writer.println(product.getId());
+			writer.flush();
+
 		}
-		
+
 		writer.close();
 	}
 }
-*/
